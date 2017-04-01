@@ -1,0 +1,36 @@
+[Unit]
+Description=<%= @description %>
+
+[Service]
+<% @environments and @environments.each do |k,v| %>
+Environment='<%= "#{k.upcase}=#{v}" %>'
+<% end %>
+<% if @env_file %>
+EnvironmentFile='<%= @env_file %>'
+<% end %>
+Type=simple
+WorkingDirectory=<%= @dir %>
+ExecStart=<%= @command %>
+ExecReload=/bin/kill -<%= @reload_signal %> $MAINPID
+KillSignal=<%= @stop_signal %>
+<% if @pid_file %>
+PIDFile=<%= @pid_file %>
+<% end %>
+TimeoutSec=<%= @timeout || 30 %>
+Restart=always
+<% if @cpu_quota %>
+CPUAccounting=true
+CPUQuota=<%= @cpu_quota %>%
+<% end %>
+<% if @memory_max %>
+MemoryMax=<%= @memory_max %>
+<% end %>
+<% if @io_weight %>
+IOWeight=<%= @io_weight %>
+<% end %>
+<% if @slice %>
+Slice=<%= @slice %>.slice
+<% end %>
+
+[Install]
+WantedBy=default.target
